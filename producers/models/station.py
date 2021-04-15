@@ -73,8 +73,7 @@ class Station(Producer):
         self.producer.produce(
             topic=self.topic_name,
             key={"timestamp": self.time_millis()},
-            # TODO: Identify the correct values and replace the "???"s!!!
-            value=value,
+            value=value
         )
 
     def __str__(self):
