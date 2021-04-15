@@ -1,13 +1,17 @@
 """Contains functionality related to Lines"""
+import configparser
 import json
 import logging
+from pathlib import Path
 
 from models import Line
 
+logger=logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
 
-from config.config import STATIONS_TOPIC_V1
+STATIONS_TOPIC_V1=config['topics']['STATIONS_TOPIC_V1']
 
 
 class Lines:

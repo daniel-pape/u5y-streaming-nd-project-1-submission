@@ -1,4 +1,5 @@
 """Methods pertaining to loading and configuring CTA "L" station data."""
+import configparser
 import logging
 from pathlib import Path
 
@@ -6,8 +7,13 @@ from confluent_kafka import avro
 
 from models import Turnstile
 from models.producer import Producer
-from config.config import ARRIVALS_TOPIC_PREFIX
+
 logger=logging.getLogger(__name__)
+
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
+
+ARRIVALS_TOPIC_PREFIX=config['topics']['ARRIVALS_TOPIC_PREFIX']
 
 
 class Station(Producer):

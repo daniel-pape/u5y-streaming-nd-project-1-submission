@@ -1,4 +1,5 @@
 """Methods pertaining to weather data"""
+import configparser
 import json
 import logging
 import random
@@ -9,9 +10,13 @@ from pathlib import Path
 import requests
 
 from models.producer import Producer
-from config.config import WEATHER_TOPIC_V1
 
 logger=logging.getLogger(__name__)
+
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
+
+WEATHER_TOPIC_V1=config['topics']['WEATHER_TOPIC_V1']
 
 
 class Weather(Producer):

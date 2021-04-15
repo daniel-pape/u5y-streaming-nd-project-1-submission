@@ -4,19 +4,26 @@ import logging
 
 import requests
 
-logger = logging.getLogger(__name__)
+logger=logging.getLogger(__name__)
 
-from config.config import POSTGRES_STATIONS_EXPORT_TOPIC_PREFIX
-from config.config import POSTGRES_STATIONS_EXPORT_TOPIC_TABLE
+import configparser
 
-KAFKA_CONNECT_URL = "http://localhost:8083/connectors"
-CONNECTOR_NAME = f"{POSTGRES_STATIONS_EXPORT_TOPIC_TABLE}"
+from pathlib import Path
+
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
+
+POSTGRES_STATIONS_EXPORT_TOPIC_PREFIX=config['topics']['POSTGRES_STATIONS_EXPORT_TOPIC_PREFIX']
+POSTGRES_STATIONS_EXPORT_TOPIC_TABLE=config['topics']['POSTGRES_STATIONS_EXPORT_TOPIC_TABLE']
+KAFKA_CONNECT_URL="http://localhost:8083/connectors"
+CONNECTOR_NAME=f"{POSTGRES_STATIONS_EXPORT_TOPIC_TABLE}"
+
 
 def configure_connector():
     """Starts and configures the Kafka Connect connector"""
     logging.debug("creating or updating kafka connect connector...")
 
-    resp = requests.get(f"{KAFKA_CONNECT_URL}/{CONNECTOR_NAME}")
+    resp=requests.get(f"{KAFKA_CONNECT_URL}/{CONNECTOR_NAME}")
     if resp.status_code == 200:
         logger.info("connector already created skipping recreation")
         return
@@ -40,7 +47,8 @@ def configure_connector():
                 "value.converter": "org.apache.kafka.connect.json.JsonConverter",
                 "value.converter.schemas.enable": "false",
                 "batch.max.rows": "500",
-                "connection.url": "jdbc:postgresql://postgres:5432/cta", # TODO: Understand why I need to use the Docker URL instead of the Host URL here!
+                "connection.url": "jdbc:postgresql://postgres:5432/cta",
+                # TODO: Understand why I need to use the Docker URL instead of the Host URL here!
                 "connection.user": "cta_admin",
                 "connection.password": "chicago",
                 "table.whitelist": f"{POSTGRES_STATIONS_EXPORT_TOPIC_TABLE}",

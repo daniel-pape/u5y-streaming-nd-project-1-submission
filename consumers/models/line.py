@@ -1,15 +1,20 @@
 """Contains functionality related to Lines"""
+import configparser
 import json
 import logging
+from pathlib import Path
 
 from models import Station
 
+logger=logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
 
-from config.config import TURNSTILE_SUMMARY_TOPIC
-from config.config import STATIONS_TOPIC_V1
-from config.config import ARRIVALS_TOPIC_PREFIX
+TURNSTILE_SUMMARY_TOPIC=config['topics']['TURNSTILE_SUMMARY_TOPIC']
+STATIONS_TOPIC_V1=config['topics']['STATIONS_TOPIC_V1']
+ARRIVALS_TOPIC_PREFIX=config['topics']['ARRIVALS_TOPIC_PREFIX']
+
 
 class Line:
     """Defines the Line Model"""
@@ -38,7 +43,7 @@ class Line:
         prev_station_id = value.get("prev_station_id")
         prev_dir = value.get("prev_direction")
         if prev_dir is not None and prev_station_id is not None:
-            prev_station = self.stations.get(prev_station_id)
+            prev_station=self.stations.get(prev_station_id)
             if prev_station is not None:
                 prev_station.handle_departure(prev_dir)
             else:

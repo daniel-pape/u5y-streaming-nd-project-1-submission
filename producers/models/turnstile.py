@@ -1,4 +1,5 @@
 """Creates a turnstile data producer"""
+import configparser
 import logging
 from pathlib import Path
 
@@ -6,10 +7,13 @@ from confluent_kafka import avro
 
 from models.producer import Producer
 from models.turnstile_hardware import TurnstileHardware
-from config.config import TURNSTILE_TOPIC_V1
 
 logger=logging.getLogger(__name__)
 
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
+
+TURNSTILE_TOPIC_V1=config['topics']['TURNSTILE_TOPIC_V1']
 
 class Turnstile(Producer):
     key_schema=avro.load(f"{Path(__file__).parents[0]}/schemas/turnstile_key.json")

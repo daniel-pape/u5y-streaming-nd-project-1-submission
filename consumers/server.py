@@ -1,27 +1,28 @@
 """Defines a Tornado Server that consumes Kafka Event data for display"""
+import configparser
 import logging
 import logging.config
 from pathlib import Path
-
-from config.config import WEATHER_TOPIC_V1
-from config.config import STATIONS_TOPIC_V1
-from config.config import TURNSTILE_SUMMARY_TOPIC
-from config.config import ARRIVALS_TOPIC_PREFIX
-
 
 import tornado.ioloop
 import tornado.template
 import tornado.web
 
-# Import logging before models to ensure configuration is picked up
-logging.config.fileConfig(f"{Path(__file__).parents[0]}/logging.ini")
-
+import topic_check
 from consumer import KafkaConsumer
 from models import Lines, Weather
-import topic_check
 
+# Import logging before models to ensure configuration is picked up
+logging.config.fileConfig(f"{Path(__file__).parents[0]}/logging.ini")
 logger=logging.getLogger(__name__)
 
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
+
+WEATHER_TOPIC_V1=config['topics']['WEATHER_TOPIC_V1']
+STATIONS_TOPIC_V1=config['topics']['STATIONS_TOPIC_V1']
+TURNSTILE_SUMMARY_TOPIC=config['topics']['TURNSTILE_SUMMARY_TOPIC']
+ARRIVALS_TOPIC_PREFIX=config['topics']['ARRIVALS_TOPIC_PREFIX']
 
 class MainHandler(tornado.web.RequestHandler):
     """Defines a web request handler class"""

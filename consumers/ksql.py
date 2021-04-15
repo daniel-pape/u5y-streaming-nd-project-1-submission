@@ -5,13 +5,16 @@ import logging
 import requests
 
 import topic_check
-from config.config import TURNSTILE_SUMMARY_TOPIC
-from config.config import TURNSTILE_TOPIC_V1
+import configparser
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
-
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
 
 KSQL_URL = "http://localhost:8088"
+TURNSTILE_TOPIC_V1=config['topics']['TURNSTILE_TOPIC_V1']
+TURNSTILE_SUMMARY_TOPIC=config['topics']['TURNSTILE_SUMMARY_TOPIC']
 
 #
 # TODO: Complete the following KSQL statements.

@@ -1,13 +1,18 @@
 """Defines trends calculations for stations"""
+import configparser
 import logging
+from pathlib import Path
 
 import faust
-from config.config import STATIONS_TOPIC_V1
-from config.config import TRANSFORMED_STATIONS_TOPIC
-from config.config import POSTGRES_STATIONS_EXPORT_TOPIC
 
 logger=logging.getLogger(__name__)
 
+config=configparser.ConfigParser()
+config.read(f"{Path().resolve().parent}/topics.ini")
+
+STATIONS_TOPIC_V1=config['topics']['STATIONS_TOPIC_V1']
+TRANSFORMED_STATIONS_TOPIC=config['topics']['TRANSFORMED_STATIONS_TOPIC']
+POSTGRES_STATIONS_EXPORT_TOPIC=config['topics']['POSTGRES_STATIONS_EXPORT_TOPIC']
 
 # Faust will ingest records from Kafka in this format
 class Station(faust.Record):
